@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-2"/>
+    <title>Projekt IIS</title>
+    <style type="text/css">
+    	table { border-collapse: collapse; }
+    	td, th { border: 1px solid black; padding: 0.3em 0.5em; text-align: left; }
+    	dt { font-weight: bold; margin-top: 0.5em; }
+    </style>
+</head>
+<body>
+
+<!-- Zkontrolujte prosím nastavení kódování v hlavičce dokumentu 
+     podle použitého editoru -->
+
+<h1>Učebne</h1> <!-- Nahradte názvem svého zadání -->
+
+<dl>
+	<dt>Autori</dt>
+	<dd>Tomáš Mészároš 
+	    <a href="mailto:xmesza03@stud.fit.vutbr.cz">xmesza03@stud.fit.vutbr.cz</a> -
+		správa užívatelov a užívatelské rozhranie
+	</dd>
+	<dd>Dávid Molnár
+	    <a href="mailto:xmolna02@stud.fit.vutbr.cz">xmolna02@stud.fit.vutbr.cz</a> - 
+		databázový subsystém
+	</dd>
+	<dt>URL aplikace</dt>
+	<dd><a href="http://www.stud.fit.vutbr.cz/~xmolna02/IIS">http://www.stud.fit.vutbr.cz/~xmolna02/IIS</a></dd>
+</dl>
+
+<h2>Užívatelia systému pre testovanie</h2>
+<table>
+<tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
+<tr><td>admin</td><td>admin</td><td>Administrátor</td></tr>
+<tr><td>bidlo</td><td>bidlo</td><td>Zamestnanec</td></tr>
+<tr><td>kotasek</td><td>kotasek</td><td>Zamestnanec</td></tr>
+</table>
+
+<h2>Implementácia</h2>
+<p>K vytvoreniu systému sme použili <strong>CodeIgniter</strong>, ktorý je jednoduchý PHP framework pracujúci podľa
+návrhového vzoru <strong>Model View Controller</strong>. V koreňovom adresári je umiestnená adresárová štruktúra frameworku, do ktorého sú pridané nami vytvorené zdrojové súbory. Adresár <code>application/controllers</code> je miesto pre triedy typu <code>Controller</code>, ktoré obsahujú logiku zobrazenia jednotlivých stránok.
+Pohľady (v terminologií frameworku &quot;views&quot;) sú v adesári <code>application/views</code>. Zobrazujú ich metódy patričného controlleru.</p>
+<p>Krátky popis controllerov:</p>
+<ul>
+<li><strong>login.php</strong>: riadi prihlásenia, zobrazí prihlasovací formulár, atď.</li>
+<li><strong>site.php</strong>: zobrazí hlavnú stránku</li>
+<li><strong>search.php</strong>: implementuje prípady použitia, ktoré sú povolené neprihláseným užívatelom (vyhľadať učebne, rezervácie, zobraziť rozvrh učebne)</li>
+<li><strong>user.php</strong>: prípady použitia, ktoré sú povolené prihláseným užívatelom v roli zamestnanec (pridanie rezervácie)</li>
+<li><strong>management.php</strong>: prípady použitia, ktoré sú povolené prihláseným užívatelom v roli administrátor (správa zamestnancov, učebníc a XML import-export údajov)</li>
+</ul>
+<p>
+Prístup do databázy implementujú špeciálne triedy typu Model. Ide o PHP skripty (triedy) uložené do adresáre <code>application/models</code>.
+</p>
+<h2>Inštalácia</h2>
+<ul>
+<li>Softvarové požiadavky:
+    <ul>
+    <li>PHP verzia 5.16 alebo vyššia</li>
+    <li>databáza MySQL (4.1+)</li>
+    </ul>
+</li>
+<li>Inicializácia a konfigurácia databáze
+    <ul>
+    <li>Vytvorenie novej databázy s názvom: <strong>xmolna02</strong>
+    <li>Vytvorenie tabuliek pomocou <strong>sql/create.sql</strong> (napr. phpmyadmin > import (nastaviť kódovanie na UTF-8))</li>
+    <li>Vkládanie vzorových dat pomocou <strong>sql/insert.sql</strong> (napr. phpmyadmin > import (nastaviť kódovanie na UTF-8))</li>
+    <li>Nastaviť premenné <code>$config['base_url']</code> v súbore <strong>application/config/config.php</strong> na URL informačného systému</li>
+    <li>Nastaviť nasledujúce premenné v súbore <strong>application/config/database.php</strong>:
+        <ul>
+        <li><code>$db['default']['hostname']</code> - URL serveru MySQL</li>
+        <li><code>$db['default']['username']</code> - prihlasovacie meno</li>
+        <li><code>$db['default']['password']</code> - heslo</li>
+        <li><code>$db['default']['database'] = 'xmolna02';</code></li>
+        </ul>
+    </li>
+    <li>Nastaviť relatívnu cestu (riadka <code>RewriteRule ^(.*)$ <strong>/~xmolna02/IIS</strong>/index.php/$1 [L]</code>) v súbore <strong>.htaccess</strong> na relatívnu cestu adresára IS</li>
+    </ul>
+</li>
+<li>Vlastná inštalácia informačného systému <strong>Učebne</strong> spočíva v rozbalení týchto adresárov a súborov, následným kopírovaním na web-server:</li>
+    <ul>
+    <li><code>application</code></li>
+    <li><code>css</code></li>
+    <li><code>img</code></li>
+    <li><code>js</code></li>
+    <li><code>system</code></li>
+    <li><code>xml</code></li>
+    <li><code>.htaccess</code></li>
+    <li><code>index.php</code></li>   
+    </ul>
+</ul>
+
+<h2>Známe problémy</h2>
+<p>Implementovali sme všetky body zadania (IDS a IIS).</p>
+</body>
+</html>

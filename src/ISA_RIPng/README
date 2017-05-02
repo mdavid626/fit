@@ -1,0 +1,59 @@
+﻿* -----------------------------------------------------------------------------
+* File:     Readme
+* Date:     2015-11-17
+* Encoding: UTF-8
+* Author:   David Molnar, xmolna02@stud.fit.vutbr.cz
+* Project:  ISA Projekt
+* -----------------------------------------------------------------------------
+
+Nástroj monitorování RIP a RIPng
+------------------------
+myripsniffer
+Tento nástroj umožňuje zachycení paketu protokolů RIP, RIPv2 a RIPng. 
+Argumenty příkazového řádku:
+./myripsniffer -i interface: povinný název rozhraní
+
+Příklad:
+sudo ./myripsniffer -i eth0
+
+Výstup:
+=========> RIPv2 Response (104 bytes) <=========
+[MAC] 00-0C-29-76-BD-BE -> 01-00-5E-00-00-09
+[IP:Port] 10.0.0.1:520 -> 224.0.0.9:520
+[Authentication] Password: ISA>29012c28622
+[Route (2/0)] 10.48.50.0/24 -> 0.0.0.0 [1]
+ 
+Formát: [Route (<address family>/<route tag>)] <network ip>/<netmask> -> <next_hop> [<metric>]
+
+=========> RIPng Response (104 bytes) <=========
+[MAC] 00-0C-29-76-BD-BE -> 33-33-00-00-00-09
+[IPv6:Port] fe80::20c:29ff:fe76:bdbe:521 -> ff02::9:521
+[Route (0)] fd00::/64 [1]
+[Route (0)] fd00:cd:2d78::/64 [1]
+[Route (0)] fd00:10d:2ed6::/64 [1]
+[Route (0)] fd00:4a4:6d::/64 [1]
+[Route (0)] fd00:960:15ae::/64 [1]
+
+Formát: [Route (<route tag>) <network ipv6>/<prefix> [<metric>]
+
+myripresponse
+Nástroj umožňuje posílání RIPv2 Response zprávy. 
+Argumenty:
+-i <interface_name>: nepovinný název rozhraní, např. eth0
+-r <IPv4>/[8-30]: povinná adresa sítě a prefix
+-n <IPv4>: nepovinná adresa next hop
+-m [0-16]: nepovinný atribut metric
+-t [0-65535]: nepovinný atribut route tag
+-p <password>: nepovinné autentizačné heslo
+
+Příklad:
+sudo ./myripresponse -i 10.10.10.0/24 -p "ISA>123546789"
+
+Seznam odevzdaných souborů:
+---------------------------
+myripsniffer.c
+myripresponse.c
+rip.h
+Makefile
+manual.pdf
+README

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Ucebne>
+ <Ucebna id_miest="E112" typ_miest="Poslucháreň" kapacita="156" spec_vyb=""/>
+ <Ucebna id_miest="E104" typ_miest="Poslucháreň" kapacita="72" spec_vyb=""/>
+ <Ucebna id_miest="D105" typ_miest="Poslucháreň" kapacita="300" spec_vyb=""/>
+ <Ucebna id_miest="D206" typ_miest="Poslucháreň" kapacita="154" spec_vyb=""/>
+ <Ucebna id_miest="L203" typ_miest="Počítačové laboratorium" kapacita="20" spec_vyb="20 PC, sluchátka"/>
+ <Ucebna id_miest="N103" typ_miest="Počítačové laboratorium" kapacita="20" spec_vyb="20 PC"/>
+ <Ucebna id_miest="O203" typ_miest="Počítačové laboratorium" kapacita="20" spec_vyb=""/>
+ <Ucebna id_miest="O204" typ_miest="Síťové laboratorium" kapacita="20" spec_vyb=""/>
+ <Ucebna id_miest="D207" typ_miest="Poslucháreň" kapacita="154" spec_vyb=""/>
+ <Ucebna id_miest="E105" typ_miest="Poslucháreň" kapacita="72" spec_vyb=""/>
+ <Ucebna id_miest="L204" typ_miest="Počítačové laboratorium" kapacita="20" spec_vyb="25 PC"/>
+ <Ucebna id_miest="N101" typ_miest="Počítačové laboratorium" kapacita="20" spec_vyb="30 PC"/>
+</Ucebne>

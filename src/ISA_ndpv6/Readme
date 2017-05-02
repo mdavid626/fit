@@ -1,0 +1,30 @@
+﻿* -----------------------------------------------------------------------------
+* File:     Readme
+* Date:     2011-11-01
+* Encoding: UTF-8
+* Author:   David Molnar, xmolna02@stud.fit.vutbr.cz
+* Project:  ISA Projekt
+* -----------------------------------------------------------------------------
+
+Neighbor Discovery Proxy
+------------------------
+Program pracuje podla definicie v RFC 4389. Bezi v nekonecnej smycke a spracovava prichadzajuce pakety. 
+Z paketov nesucich link-layer informacie, spracovava len Neighbor Solicitation a Neighbor Advertisement spravy.
+K ukonceniu programu dojde po prijati signalu SIGTERM, SIGQUIT alebo SIGINT.
+
+Program ma dva parametre:
+-i interface (vnutorne rozhranie)
+-o interface (vonkajsie rozhranie)
+
+
+Priklad spusteni
+----------------
+ndpv6 -i eth0 -o eth2
+
+
+Zoznam odovzdanych suboru:
+--------------------------
+ndpv6.c
+Makefile
+manual.pdf
+Readme

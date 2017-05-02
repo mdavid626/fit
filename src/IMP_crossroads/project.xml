@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project outputprefix="free_rtos">
+
+    <!--  Project description -->
+    <name>Križovatka</name>
+    <author>Dávid Molnár</author>
+    <authoremail>xmolna02@stud.fit.vutbr.cz</authoremail>
+    <revision>20111205</revision>
+    <description>Model riadenia prevádzky na svetelnej križovatke</description>
+
+    <!--  MCU part -->
+    <mcu>
+        <include>mcu/libs/keyboard/package.xml</include>
+        <include>mcu/libs/lcd/package.xml</include>
+
+        <include>rtos/package_msp430.xml</include>
+
+        <headerfile>FreeRTOSConfig.h</headerfile>
+        <headerfile>utils.h</headerfile>
+        <file>utils.c</file>
+        <file>main.c</file>
+    </mcu>
+
+    <!-- FPGA part -->
+    <fpga>
+        <include>fpga/ctrls/lcd/package.xml</include>
+        <include>fpga/ctrls/keyboard/package.xml</include>
+        <file>top_level.vhd</file>
+    </fpga>
+
+</project>

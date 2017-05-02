@@ -1,0 +1,99 @@
+#!/bin/ksh
+
+# IOS projekt c. 1
+# Author: David Molnar
+# Date: 2011-03-27
+# File: hltrace
+# Description: zvyrazneni syntaxe
+
+
+# Functions
+# -----------------------------------------------------------------------------
+
+# print help message
+printHelp()
+{
+  echo "hltrace zvyrazni syntax stopy od strace." 1>&2
+  echo "Pouziti: hltrace [volby] <stopa.strace >stopa.html" 1>&2
+  echo "Volby:" 1>&2
+  echo "  -s SYSCALL  Specialne zvyrazni volani SYSCALL." 1>&2
+}
+
+
+# Init
+# -----------------------------------------------------------------------------
+
+
+
+# Process command line parameters
+# -----------------------------------------------------------------------------
+
+OPTERR=0 # turn off getopts error messages
+sw=0
+sVal="adsfadsfwejfasd;oifjalkdsfjdsalkfjsad;lkfjsadfsadf"
+
+while getopts "s:h" SWITCH
+do
+   case $SWITCH in	
+	"s") sw=1; sVal="$OPTARG";;
+	"h") printHelp; exit 0;;
+    "?") printHelp; exit 2;;
+    ":") printHelp; exit 2;;
+   esac
+done
+
+
+# Begin of html file
+# -----------------------------------------------------------------------------
+ 
+echo "<html>"
+echo "<style>"
+echo ".pid { color:darkred; }"
+echo ".ts { color:navy; }"
+echo ".number { color:red; }"
+echo ".const { color:green; }"
+echo ".string { color:blue; }"
+echo ".hlcall { text-decoration:none; font-weight:bold; color:black; }"
+echo ".call { text-decoration:none; color:olive; }"
+echo "</style>"
+echo "<body><pre>"
+
+
+# Body of html file
+# -----------------------------------------------------------------------------
+
+syscallURL="http://www.kernel.org/doc/man-pages/online/pages/man2/"
+
+while read input
+do
+  echo "$input" | sed \
+  "
+  s#&#\&amp;#g;
+  s#<#\&lt;#g;
+  s#>#\&gt;#g;
+  
+  s#\(\"[^\"]*\"\)#<span class=\"string\">\1</span>#g;
+  s#\([[:upper:]][ABCDEFGHIJKLMNOPQRSTUVWXYZ0-9_]*\)\([^a-z]\{1,\}\)#<span class=\"const\">\1</span>\2#g;
+  s#^\([0-9][0-9]*\) #<span class=\"pid\">\1</span> #g;
+  s#\([ ][ ]*\)\([0-9]\.[0-9]*\) #\1<span class=\"ts\">\2</span> #g;
+  
+  s#\($sVal\)\((\)#<a href=\"http://www.kernel.org/doc/man-pages/online/pages/man2/\1.2.html\" class=\"hlcall\">\1</a>\2#g;
+  s#\([a-zA-Z][a-z0-9_]*\)\((\)#<a href=\"http://www.kernel.org/doc/man-pages/online/pages/man2/\1.2.html\" class=\"call\">\1</a>\2#g;
+  
+  s#\((\)\(0x[0-9a-fA-F][0-9a-fA-F]*\)#\1<span class=\"number\">\2</span>#g;
+  s#\(, \)\(0x[0-9a-fA-F][0-9a-fA-F]*\)#\1<span class=\"number\">\2</span>#g;
+  s#\( = \)\(0x[0-9a-fA-F][0-9a-fA-F]*\)#\1<span class=\"number\">\2</span>#g;
+  
+  s#\((\)\([-]\{0,1\}[0-9][0-9]*\)#\1<span class=\"number\">\2</span>#g;
+  s#\(, \)\([-]\{0,1\}[0-9][0-9]*\)#\1<span class=\"number\">\2</span>#g;
+  s#\( = \)\([-]\{0,1\}[0-9][0-9]*\)#\1<span class=\"number\">\2</span>#g;
+  "
+done
+
+
+# End of html file
+# -----------------------------------------------------------------------------
+
+echo "</pre></body></html>"
+
+exit 0

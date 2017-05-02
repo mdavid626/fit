@@ -1,0 +1,279 @@
+.. article:: apps_demo_msp_krizovatka
+    :author: D·vid Moln·r <xmolna02 AT stud.fit.vutbr.cz>
+    :updated: 20111205
+
+    Model riadenia prev·dzky na svetelnej kriûovatke
+
+============================================================
+Model riadenia prev·dzky na svetelnej kriûovatke (FreeRTOS)
+============================================================
+
+.. contents:: Obsah
+
+Popis aplik·cie
+==================
+
+S vyuûitÌm prostriedka RT jadra FreeRTOS je pre MSP430 na FITkitu v jazyku C implementovan˝ model svetelnej kriûovatke (``Kriûovatka`` - CZ, ``Crossroad`` - EN)
+
+tvoren· 
+
+1. ``tlaËidlami`` (s˙ vyuûitÈ nasleduj˙ce tlaËidl· z maticovej kl·vesnice FITkitu: ``A``, ``B``, ``C``, ``D``, ``*``, ``0``, ``#``, ``1`` popÌsanÈ niûöie), 
+
+2. ``riadiacou Ëasùou`` (implementovanÈ v MSP430 pomocou prostriedka FreeRTOS) reaguj˙ce na zmenu Ëasu a na stlaËenie tlaËidla a
+
+3. ``riadenou Ëasùou`` reprezentovanou pre jednoduchosù premenn˝mi v pam‰ti FITkitu.
+
+Aplik·ciu je moûno slovne ``specifikovaù`` nasledovne:
+
+Kriûovatka v tvaru "X" s obojsmernou prev·dzkou motorov˝ch vozidel (vz·jomne kolmÈ silnice v smeroch svetov˝ch str·n S, J, V, Z).
+V blÌzkosti krÌûenÌ ciest vedie cez kaûd˙ z ciest prechod pre chodce (zebra). 
+U kaûdej zebry je semafor (svetelnÈ signalizaËnÈ zariadenie, SSZ) pre vozidla vjazdiace do kriûovatky (trojfarebn· s˙stava s pln˝mi sign·lmi - Ëerven·, ûlt·, zelen· - urËen˝mi k signaliz·cii povelu POZOR (Ëerven· + ûlt·), VOºNO (zelen·), STOJ (Ëerven·)). 
+
+œalej je na kaûdej strane zebry semafor pre chodce (dvojfarebn· s˙stava sveteln˝ch sign·lov Ëerven·/STOJ, zelen·/VOºNO) vybaven˝ tlaËidlom pre (signaliz·ciu poûiadavku) chodcov (na prechod zebrou) a schopn˝ generovaù doprovodnÈ akustickÈ sign·ly STOJ/VOæNO sl˙ûiace okrem in˝ch k orient·cii nevidom˝ch.
+Na kaûdom semaforu pre chodce je tieû umiesten˝ sign·l ûltÈho svetla v tvaru chodca upozorÚuj˙ci vodiËov na to, ûe sa blÌûi k prechodu, prejazdom Ëoho by kriûoval voln˝ smer chodcov.
+ 
+S˙ podporovanÈ nasleduj˙ce reûimy Ëinnosti: denn· prev·dzka (DE“, aktivovan· v dobe od 04:00 do 23:00 vr·tane), noËn· prev·dzka (NOC: preruöovan˝ svit ûlt˝ch pln˝ch sign·lov v dobe od 23:01 do 03:59 vr·tane) a vypnutie signaliz·cie (OFF: vypnutie vöetk˝ch sign·lov na z·klade vonkajöieho podnetu na zvl·ötnom riadiacom vstupu - tlaËidlo ``0``). 
+
+Sign·lny cyklus (pl·n) reûimu je rozloûen˝ nasledovne:
+ 
+``Reûim DE“``: f·za 0 [1s] - STOJ pre vozidla S, J, V, Z a chodce S, J, V, Z, vypnutie sign·lu ûltÈho svetla v tvaru chodca, f·za 1 [2s] - POZOR pre vozidla S, J, f·za 2 [10s] - VOºNO pre vozidla S, J, (f·za [8s] podæa signaliz·cie od chodca: VOºNO pre chodca S, J, zapnutie sign·lu ûltÈho svetla v tvaru chodca), (f·za [0s] STOP pre chodca S, J, vypnutie sign·lu ûltÈho svetla v tvaru chodca), f·za 3 [3s] - POZOR pre vozidla S, J, f·za 4 [1s] - STOP pre vozidla S, J. F·zy 0 aû 4 opakuj˙, striedaj˙ sa smery S, J a V, Z.
+
+Sign·l VOºNO pre chodca je do sign·lneho cyklu kriûovatky zaraden˝ aû na z·klade predchodzieho stlaËenia prÌsluönÈho tlaËidla chodca.
+
+Prechody medzi reûimami DEN, NOC a OFF s˙ urËenÈ nastavenÌm typu reaktivity (RTYPE), ktor˝ mÙûe nab˝vaù hodnoty NORMAL alebo URGENT. Ak je RTYPE=NORMAL, s˙ prechody medzi reûimami a zmeny v sign·lnom pl·nu moûnÈ len na konci cyklu t˝chto reûimov. Ak je RTYPE=URGENT, potom s˙ spomenutÈ prechody a zmeny moûnÈ i v ostatn˝ch f·ziach reûimu.
+
+.. figure:: krizovatka.png
+   :align: center
+
+   SchÈma kriûovatky
+   
+   Pozn.: ËervenÈ: SZZ pre vozidla, ûltÈ: sign·l ûltÈho svetla v tvaru chodca, zelenÈ: SZZ pre chodce
+   
+Popis tlaËidiel a symbolov na LCD
+==================================
+
+TlaËidl· z maticovej kl·vesnice FITkitu:
+
+1. ``A`` - signaliz·cia od chodca SEVER æav˝
+2. ``B`` - signaliz·cia od chodca JUH æav˝
+3. ``C`` - signaliz·cia od chodca V›CHOD æav˝
+4. ``D`` - signaliz·cia od chodca Z¡PAD æav˝
+5. ``*`` - preskoËenie aktu·lnej f·zy (len v reûime DEN a pri rtyspe=URGENT)
+6. ``#`` - prepÌnanie reûimu: DEN alebo NOC
+7. ``1`` - prepÌnanie mÛdu zobrazenia Ëasu: aktu·lny Ëas alebo zost·vaj˙ci Ëas v aktu·lnej f·ze
+8. ``0`` - prepnutie do reûimu OFF, n·slednym stlaËenÌm prepne nasp‰ù
+
+Symboly na LCD display (5x8 pixel):
+
+  Symbol trojfarebnej SZZ pre vozidla: STOP, POZOR a VOºNO
+  
+::
+  
+  XXXXX   XXXXX   .....
+  XX.XX   XX.XX   .....
+  XXXXX   XXXXX   .....
+  .....   XX.XX   .....
+  .....   XXXXX   .....
+  .....   .....   XXXXX
+  .....   .....   XX.XX
+  .....   .....   XXXXX
+  
+Symbol dvojfarebnej SZZ pre chodcov: STOP a VOºNO
+
+::
+
+  XXXXX   .....
+  XX.XX   .....
+  XX.XX   .....
+  XXXXX   .....
+  .....   XXXXX
+  .....   XX.XX
+  .....   XX.XX
+  .....   XXXXX
+  
+Symbol sign·lu ûltÈho svetla v tvaru chodca: POZOR
+
+::
+
+  .....
+  .....
+  XXXXX
+  XX.XX
+  XX.XX
+  XXXXX
+  .....
+  .....
+  
+KeÔ je svetlo vypnutÈ, na LCD sa zobrazÌ pr·zdne miesto.
+  
+Prv˝ riadok LCD:
+
+::
+
+  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 |
+  | S | O | C |   | S | O | C |       | S  | O  | C  |    | S  | O  | C  |
+  
+1. ``Znaky 1-3``: severn˝ SZZ
+2. ``Znaky 5-6``: juûn˝ SZZ
+3. ``Znaky 10-12``: v˝chodn˝ SZZ
+4. ``Znaky 14-16``: z·padn˝ SZZ
+  
+1. ``S``: SZZ pre vozidla
+2. ``O``: sign·l ûltÈho svetla v tvaru chodca
+3. ``C``: SZZ pre chodce
+
+Druh˝ riadok LCD:
+
+::
+
+  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 |
+  | D | A | Y |   | H | H | : | M | M | :  | S  | S  |    | U  | R  | G  |
+  
+1. ``Znaky 1-3``: aktu·lny reûim, mÙûe byù: DAY/NGT - DEN alebo NOC
+2. ``Znaky 5-12``: aktu·lny Ëas vo form·te HH:MM:SS (HH - hodiny, MM - min˙ty, SS - sekundy)
+3. ``Znaky 14-16``: aktu·lny typ reaktivity, mÙûe byù: NOR/URG - NORMAL alebo URGENT
+
+Realiz·cie aplik·cie pomocou prostriedku RT jadra FreeRTOS
+===========================================================
+
+ProblÈm rozloûÌme na menöie Ëasti, urobÌme tzv. ``RT ˙lohy``. 
+
+1. ``terminal_task`` - realizovanÈ vo funkcii:
+
+::
+  
+  static void terminal_task(void *param) 
+
+V tejto RT ˙lohe rieöime spracovanie termin·lu a aktualiz·ciu ˙dajov na LCD (funkcia ``display_info``)
+
+2. ``keyboard_task`` - realizovanÈ vo funkcii: 
+
+::
+  
+  static void keyboard_task(void *param) 
+
+T·to ˙loha sl˙ûi k spracovaniu stlaËenÌ tlaËidiel na FITkitu. StlaËenie tlaËidla je signalizovanÈ nastavenÌm glob·lnej premennej.
+
+3. ``clock_task`` - realizovanÈ vo funkcii:
+
+::
+  
+  static void clock_task(void *param) 
+
+Reprezentuje hodinu kriûovatky. Reûim (DEN/NOC) menÌme podæa Ëasu v tejto funkcii.
+
+4. ``x_task`` - realizovanÈ vo funkcii: 
+
+::
+  
+  static void x_task(void *param) 
+
+Tu sa odohr·va vlastnÈ riadenie kriûovatky.
+
+PrÌkazov˝ riadok aplik·cie
+===========================
+
+O prÌpadn˙ obsluhu prÌkazovÈho riadku sa star· ˙loha ``terminal_task``, ktor· je volan· s periÛdou 300 ms. T·to ˙loha z·roveÚ aktualizuje inform·cie na LCD. ``flag_timer`` indikuje, ûe inform·cie na LCD maj˙ byù aktualizovanÈ.
+
+::
+  
+  static void terminal_task(void *param) 
+  {
+    while (1)
+    {
+      terminal_idle();
+        
+      if (flag_timer > 0)
+      {
+          display_info();
+          flag_timer--;
+      }
+        
+      // Delay for 300 ms 
+      vTaskDelay(300 / portTICK_RATE_MS);
+    }
+  }
+
+Po naviazaniu komunik·cie medzi PC a FITkitem je moûnÈ pouûiù nasleduj˙ce prÌkazy:
+
+::
+
+  SET HH:MM:SS ... nastavenie Ëasu beûiaceho vo FITkitu, HH - hodiny, MM - min˙ty, SS - sekundy
+               ... prÌklad SET 13:55:01
+               ... prÌklad zle: SET 12:5:2, sp·vne: SET 12:05:02
+
+	  
+Inicializ·cia a spustenie aplik·cie
+====================================
+
+Viz ``main.c`` (kostra):
+
+::
+
+  int main( void ) 
+  {
+    // HW init
+    initialize_hardware();
+    WDG_stop();
+    
+    // Init variables
+    flag_timer = 0;
+    flag_clock = 0;
+    flag_clock = 0;
+
+    time = 0;
+    task_delay = 0;
+    
+    int i;
+    for (i = 0; i < WALKER_DELAY_LEN; i++)
+    {
+      walker_delay[i] = 0;
+    }
+
+    mode = last_mode = M_DAY;
+    rtype = R_URG;
+    //rtype = R_NOR;
+
+    // Init hours, minutes and seconds
+    clk_h = 12;
+    clk_m = clk_s = 0;
+
+    // Set P1.0 to output (we will control green D5 LED
+    P1DIR |= 0x01;
+    
+    // Init P1.0 to 1 (D5 is off)
+    P1OUT ^= 0x01;
+
+    term_send_crlf();
+
+    // Install FreeRTOS tasks 
+    term_send_str_crlf("Init FreeRTOS tasks...");
+    
+    xTaskCreate(terminal_task, "TERM", 200, NULL, 1, NULL);
+    xTaskCreate(keyboard_task, "KBD", 32, NULL, 1, NULL);
+    xTaskCreate(clock_task, "CLOCK", 64, NULL, 1, NULL);
+    xTaskCreate(x_task, "X", 64, NULL, 1, &xHandle);
+
+    // Start FreeRTOS kernel
+    term_send_str_crlf("Starting FreeRTOS scheduler...\n");
+    vTaskStartScheduler();
+
+    return 0;
+  }
+
+
+ZdrojovÈ kÛdy
+===============
+
+KompletnÈ zdrojovÈ kÛdy je moûnÈ n·jst v s˙boru `mcu/main.c <SVN_APP_DIR/mcu/main.c>`_. 
+
+Zprev·dzkovanie aplik·cie
+==========================
+1. preloûte aplik·ciu
+
+2. naprogramujte MCU a FPGA a spusùte termin·lov˝ program
+
+3. nastavte Ëas v termin·lu pomocou prÌkazu SET HH:MM:SS, napr.: SET 13:25:30
+
+Aplik·cia nevyûaduje k svojej Ëinnosti nastavit okrem prepojiek umoûÚuj˙cich programovanie dalöie prepojky.
+

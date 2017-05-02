@@ -1,0 +1,357 @@
+#!/bin/ksh
+
+# IOS projekt c. 1
+# Author: David Molnar
+# Date: 2011-03-27
+# File: ardiff
+# Description: prace s archivy
+
+
+# Functions
+# -----------------------------------------------------------------------------
+
+# print help message
+printHelp()
+{
+  echo "ardiff vypisuje zmeny archivu, vytvari rozdilovy archiv nebo aplikuje rozdilovy" 1>&2
+  echo "archiv na zdrojovy archiv." 1>&2
+  echo "Pouziti: ardiff [volby] archiv1 archiv2" 1>&2
+  echo "Volby:" 1>&2
+  echo "  -o SOUBOR  Pokud je cilem skriptu vytvorit archiv, bude vytvoren do souboru" 1>&2
+  echo "             se jmenem SOUBOR (plati pro -c a -p)." 1>&2
+  echo "  -l         Vypis seznamu souboru, ktere se v zadanych archivech lisi." 1>&2
+  echo "  -c         Vytvoreni rozdiloveho archivu." 1>&2
+  echo "  -p         Aplikace rozdiloveho archivu (argument archiv2) na zdrojovy archiv" 1>&2
+  echo "             (argument archiv1)." 1>&2
+  echo "  -r         Prepnuti do reverzniho rezimu (plati pro -p)." 1>&2
+}
+
+cleanup()
+{
+  rm -rf $tempDir
+  exit $1
+}
+
+error_exit()
+{
+  echo "${1:-"Unknown Error"}" 1>&2
+  cleanup 1
+}
+
+create_target()
+{
+  echo $1 | grep "^/" >/dev/null 2>&1
+  
+  if [ $? -eq 0 ]
+  then
+    target="$1"
+  else
+    target="$actDir/$1"
+  fi
+}
+
+remove_empty()
+{
+  # remove empty files
+  find $1 -empty -exec rm -rf {} \; >/dev/null 2>&1
+
+  # remove empty directories
+  find $1 -empty -exec rmdir {} \; >/dev/null 2>&1
+}
+
+extract_archive()
+{
+  ftype=$(file -b "$1")
+
+  echo $ftype | grep -i "Zip archive data" >/dev/null 2>&1 && {
+    unzip "$1" -d "$2" >/dev/null 2>&1 || error_exit "Unable to extract: $1" 
+    cr=OK
+  }
+
+  echo $ftype | grep "bzip2 compressed data" >/dev/null 2>&1 && {
+    tar jxvf "$1" -C "$2" >/dev/null 2>&1 || error_exit "Unable to extract: $1" 
+    cr=OK
+  }
+
+  echo $ftype | grep "gzip compressed data" >/dev/null 2>&1 && {
+    tar zxvf "$1" -C "$2" >/dev/null 2>&1 || error_exit "Unable to extract: $1" 
+    cr=OK
+  }
+
+  echo $ftype | grep "tar archive" >/dev/null 2>&1 && {
+    tar xvf "$1" -C "$2" >/dev/null 2>&1 || error_exit "Unable to extract: $1" 
+    cr=OK
+  }
+
+  if [ "$cr" != "OK" ]
+  then
+	error_exit "Unable to extract archive: $1"
+  fi
+}
+
+create_archive()
+{
+  filename=$(basename $1)
+  
+  # .tar
+  echo $filename | grep -i "\.tar$" >/dev/null 2>&1 && {
+    tar cPf $1 $(ls -A) >/dev/null 2>&1
+	created="OK"
+  }
+  
+  # .tgz => gzip tar
+  echo $filename | grep -i "\.tgz$" >/dev/null 2>&1 && {
+    tar pczPf $1 $(ls -A) >/dev/null 2>&1
+	created="OK"
+  }
+  
+  # .tar.gz => gzip tar
+  echo $filename | grep -i "\.tar.gz$" >/dev/null 2>&1 && {
+    tar pczPf $1 $(ls -A) >/dev/null 2>&1
+    created="OK"	
+  }
+  
+  # .tar.bz2 => bzip tar
+  echo $filename | grep -i "\.tar.bz2$" >/dev/null 2>&1 && {
+    tar cjPf $1 $(ls -A) >/dev/null 2>&1
+	created="OK"
+  }
+  
+  # .zip
+  echo $filename | grep -i "\.zip$" >/dev/null 2>&1 && {
+    zip -qr $1 $2 >/dev/null 2>&1
+	created="OK"
+  }
+  
+  if [ "$created" != "OK" ]
+  then
+	error_exit "Unknown format of output file."
+  fi
+}
+
+
+# Init
+# -----------------------------------------------------------------------------
+tempDir="/tmp/ardiff_xmolna02_$RANDOM_$RANDOM/"
+#tempDir="/tmp/ardiff_xmolna02/"
+trap 'cleanup 1' 1 2 15
+actDir=$(pwd)
+
+
+# Process command line parameters
+# -----------------------------------------------------------------------------
+
+OPTERR=0 # turn off getopts error messages
+osw=0    # output file
+lsw=0
+csw=0
+psw=0
+rsw=0    # reverse order
+
+while getopts "o:lcpr" SWITCH
+do
+   case $SWITCH in	
+	"o") osw=1; oVal="$OPTARG";;
+	"l") lsw=1;;
+	"c") csw=1;;
+	"p") psw=1;;
+	"r") rsw=1;;
+    "?") printHelp; exit 2;;
+    ":") printHelp; exit 2;;
+   esac
+done
+
+shift $(($OPTIND - 1))
+
+if [ \( $# -ne 2 \) -o \( $lsw -eq 0 -a $csw -eq 0 -a $psw -eq 0 \) ]
+then
+  printHelp
+  exit 1
+fi
+
+if [ \( $csw -eq 1 -o $psw -eq 1 \) -a \( $osw -ne 1 \) ]
+then
+  printHelp
+  exit 1
+fi
+
+archiv1=$1
+archiv2=$2
+
+# basic tasks
+# -----------------------------------------------------------------------------
+ 
+mkdir -p ${tempDir}a 2>/dev/null || error_exit "Unable to create directory: ${tempDir}a"
+mkdir -p ${tempDir}b 2>/dev/null || error_exit "Unable to create directory: ${tempDir}b"
+mkdir -p ${tempDir}c 2>/dev/null || error_exit "Unable to create directory: ${tempDir}c"
+
+extract_archive "$archiv1" "${tempDir}a"
+extract_archive "$archiv2" "${tempDir}b"
+cd $tempDir 2>/dev/null || error_exit "Unable to change directory to $tempDir"
+
+# __l__ options
+# -----------------------------------------------------------------------------
+
+if [ $lsw -eq 1 ]
+then
+  find a/ b/ | sed s:^a/:: | sed s:^b/:: | sort | uniq | while read i
+  do
+    if [ -f "a/$i" -o -f "b/$i" ]
+	then
+	  diff -a "a/$i" "b/$i" >/dev/null 2>/dev/null || echo $i
+	fi
+  done
+  cleanup 0
+fi
+
+
+# __c__ options
+# -----------------------------------------------------------------------------
+
+if [ $csw -eq 1 ]
+then
+  find a/ b/ | sed s:^a/:: | sed s:^b/:: | sort | uniq | while read i
+  do
+    # one of them is directory => create
+    if [ -d "a/$i" -o -d "b/$i" ]
+	then
+	  mkdir -p "c/$i" 2>/dev/null || exit_error "Unable to create ${tempDir}c/$i"
+	fi
+  
+    # both are directories, no diff
+	if [ -d "a/$i" -a -d "b/$i" ]
+	then
+	  continue
+	fi
+	
+	# parent must be a valid directory
+	pdir=$(dirname "$i")
+	
+	if [ ! -d "a/$pdir" ]
+	then
+	  mkdir -p a/$pdir 2>/dev/null || {
+	    pDirFlagS=a
+		pDirFlagT=_a
+	    mv $pDirFlagS $pDirFlagT
+		mkdir -p "a/$pdir"
+	  }
+	fi
+	
+	if [ ! -d "b/$pdir" ]
+	then
+	  mkdir -p b/$pdir 2>/dev/null || {
+	    pDirFlagS=b
+		pDirFlagT=_b
+	    mv $pDirFlagS $pDirFlagT
+		mkdir -p "b/$pdir"
+	  }
+	fi
+	
+	if [ ! -d "c/$pdir" ]
+	then
+	  mkdir -p "c/$pdir" 2>/dev/null
+	fi
+	
+	# one of them is directory
+	if [ -d "a/$i" ]
+	then
+	  dirFlagS="a/$i"
+	  dirFlagT="a/${i}_$RANDOM_$RANDOM"
+	  mv "$dirFlagS" "$dirFlagT"
+	fi
+	
+	if [ -d "b/$i" ]
+	then
+	  dirFlagS="b/$i"
+	  dirFlagT="b/${i}_$RANDOM_$RANDOM"
+	  mv "$dirFlagS" "$dirFlagT"
+	fi
+	
+	# do diff
+	diff -uNa "a/$i" "b/$i" >"c/${i}.patch" 2>/dev/null
+	  
+	# one of them was directory, clean things up
+    if [ -n "$dirFlagS" ]
+	then
+	  rm -f "$dirFlagS"
+	  mv "$dirFlagT" "$dirFlagS"
+	fi
+	
+	# parent directory was a file
+	if [ -n "$pDirFlagS" ]
+	then
+	  rm -rf "$pDirFlagS"
+	  mv "$pDirFlagT" "$pDirFlagS"
+	fi
+
+	dirFlagS=""
+	dirFlagT=""
+	pDirFlagS=""
+	pDirFlagT=""
+  done
+  
+  remove_empty c
+  
+  # create archive
+  cd c
+  create_target "$oVal"
+  create_archive $target .
+  cleanup 0
+fi
+
+
+# __p__ option
+# -----------------------------------------------------------------------------
+
+if [ $psw -eq 1 ]
+then
+  find b/ | sed s:^b/:: | sed s:.patch$:: | sort | uniq | while read i
+  do
+    # nothing to patch, directories
+	if [ \( -d "b/$i" \) -a \( ! -f "b/$i.patch" \) ]
+	then
+	  mkdir -p "a/$i" 2>/dev/null || error_exit "Unable to apply patch!"
+	  continue
+	fi
+	
+	# x directory and x.patch available
+	if [ -d "b/$i" -a -f "b/$i.patch" ]
+	then
+	  if [ -d "a/$i" ]
+	  then
+		rm -rf "a/$i"
+	  else
+	    rm -rf "a/$i"
+		mkdir -p "a/$i"
+		continue
+	  fi
+	fi
+	
+	# file does not exists
+	if [ ! -f "a/$i" ]
+	then
+	  touch "a/$i" 2>/dev/null || {
+	    continue
+	  }
+	fi
+	
+	# reverse option
+    if [ $rsw -eq 1 ]
+    then
+      option="R"
+    fi
+    
+	patch "-Eusf$option" "a/$i" < "b/$i.patch" >/dev/null 2>&1 || {
+	  error_exit "Unable to patch!"
+	}
+  done
+
+  remove_empty a
+
+  # create archive
+  cd a
+  create_target "$oVal"
+  create_archive $target .
+  
+  cleanup 0
+fi
