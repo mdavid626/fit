@@ -1,6 +1,6 @@
 # FIT
 
-Assignments and projects created for classes in college at the [Brno University of Technology, Faculty of Information Technology](http://www.fit.vutbr.cz/.en).
+Assignments and projects created in college at the [Brno University of Technology, Faculty of Information Technology](http://www.fit.vutbr.cz/.en).
 
 ## [IIS: Information System](https://github.com/mdavid626/fit/tree/master/src/IIS_IS)
 Simple information system created in the CodeIgniter PHP Framework.
