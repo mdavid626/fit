@@ -32,20 +32,20 @@ Web client application used for getting information about objects on a web serve
 ## [IPP: SMS compress](https://github.com/mdavid626/fit/tree/master/src/IPP_sms%20compress)
 Perl script for compressing short SMS messages, for removing czech symbols and for application of abbrevation rules.
 
-## [ISA_ndpv6](https://github.com/mdavid626/fit/tree/master/src/ISA_ndpv6)
+## [ISA: NDPv6](https://github.com/mdavid626/fit/tree/master/src/ISA_ndpv6)
+Implementation of the Neighbor Discovery Proxy for IPv6 written in C.
+
+## [ISA: RIPng](https://github.com/mdavid626/fit/tree/master/src/ISA_RIPng)
 desc
 
-## [ISA_RIPng](https://github.com/mdavid626/fit/tree/master/src/ISA_RIPng)
+## [IZP: Czech sorting](https://github.com/mdavid626/fit/tree/master/src/IZP_czech%20sorting)
 desc
 
-## [IZP_czech sorting](https://github.com/mdavid626/fit/tree/master/src/IZP_czech%20sorting)
+## [IZP: Iteration calculations](https://github.com/mdavid626/fit/tree/master/src/IZP_iteration%20calculations)
 desc
 
-## [IZP_iteration calculations](https://github.com/mdavid626/fit/tree/master/src/IZP_iteration%20calculations)
+## [IZP: Matrix operations](https://github.com/mdavid626/fit/tree/master/src/IZP_matrix%20operations)
 desc
 
-## [IZP_matrix operations](https://github.com/mdavid626/fit/tree/master/src/IZP_matrix%20operations)
-desc
-
-## [IZP_text compress](https://github.com/mdavid626/fit/tree/master/src/IZP_text%20compress)
+## [IZP: Text compress](https://github.com/mdavid626/fit/tree/master/src/IZP_text%20compress)
 desc
