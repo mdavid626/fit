@@ -17,8 +17,8 @@ Traffic lights simulation written in C for [FITKit](http://merlin.fit.vutbr.cz/F
 ## [IOS: Ardiff and hltrace](https://github.com/mdavid626/fit/tree/master/src/IOS_ardiff%20hltrace)
 UNIX shell scripts. **Ardiff** can compare two archive files, show the differences and apply a differential archiv to the source archive. **Hltrace** highlights the syntax of the output of the *strace* command line tool.
 
-## [IOS_barbers](https://github.com/mdavid626/fit/tree/master/src/IOS_barbers)
-desc
+## [IOS: Sleeping barbers](https://github.com/mdavid626/fit/tree/master/src/IOS_barbers)
+Solution of the [Sleeping barber problem](https://en.wikipedia.org/wiki/Sleeping_barber_problem) in C.
 
 ## [IPK_list remote dir](https://github.com/mdavid626/fit/tree/master/src/IPK_list%20remote%20dir)
 desc
