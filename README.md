@@ -1,4 +1,4 @@
-# FIT
+# FIT projects
 
 Assignments and projects created in college at the [Brno University of Technology, Faculty of Information Technology](http://www.fit.vutbr.cz/.en).
 
