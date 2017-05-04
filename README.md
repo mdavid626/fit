@@ -1,12 +1,16 @@
 # FIT
-desc
 
-## [IIS IS](https://github.com/mdavid626/fit/tree/master/src/IIS_IS)
-http://iisis.azurewebsites.net
-admin / admin
+Assignments and projects created for classes in college at the [Brno University of Technology, Faculty of Information Technology](http://www.fit.vutbr.cz/.en).
 
-## [IMP_crossroads](https://github.com/mdavid626/fit/tree/master/src/IMP_crossroads)
-desc
+## [IIS: Information System](https://github.com/mdavid626/fit/tree/master/src/IIS_IS)
+Simple information system created in the CodeIgniter PHP Framework.
+
+There is a demo site hosited in Azure: http://iisis.azurewebsites.net. Use login "admin" with password "admin".
+
+![IIS: Information System demo](https://github.com/mdavid626/fit/raw/master/src/IIS_IS/demo.jpg)
+
+## [IMP: Crossroads](https://github.com/mdavid626/fit/tree/master/src/IMP_crossroads)
+
 
 ## [IOS_ardiff hltrace](https://github.com/mdavid626/fit/tree/master/src/IOS_ardiff%20hltrace)
 desc
