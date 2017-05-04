@@ -24,7 +24,7 @@ Solution of the [Sleeping barber problem](https://en.wikipedia.org/wiki/Sleeping
 Client/server application written in C for listing contents of a remote directory using TCP sockets.
 
 ## [IPK_rdt transfer](https://github.com/mdavid626/fit/tree/master/src/IPK_rdt%20transfer)
-desc
+Client/server application implementing the RDT (Reliable Data Transfer) protocol over UDP using sockets.
 
 ## [IPK_web client](https://github.com/mdavid626/fit/tree/master/src/IPK_web%20client)
 desc
