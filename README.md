@@ -20,8 +20,8 @@ UNIX shell scripts. **Ardiff** can compare two archive files, show the differenc
 ## [IOS: Sleeping barbers](https://github.com/mdavid626/fit/tree/master/src/IOS_barbers)
 Solution of the [Sleeping barber problem](https://en.wikipedia.org/wiki/Sleeping_barber_problem) in C.
 
-## [IPK_list remote dir](https://github.com/mdavid626/fit/tree/master/src/IPK_list%20remote%20dir)
-desc
+## [IPK: List remote dir](https://github.com/mdavid626/fit/tree/master/src/IPK_list%20remote%20dir)
+Client/server application written in C for listing contents of a remote directory using TCP sockets.
 
 ## [IPK_rdt transfer](https://github.com/mdavid626/fit/tree/master/src/IPK_rdt%20transfer)
 desc
