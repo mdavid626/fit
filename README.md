@@ -9,10 +9,12 @@ There is a demo site hosited in Azure: http://iisis.azurewebsites.net. Use login
 
 ![IIS: Information System demo](https://github.com/mdavid626/fit/raw/master/src/IIS_IS/demo.jpg)
 
-## [IMP: Crossroads](https://github.com/mdavid626/fit/tree/master/src/IMP_crossroads)
+## [IMP: Crossroad](https://github.com/mdavid626/fit/tree/master/src/IMP_crossroads)
+Traffic lights simulation written in C for [FITKit](http://merlin.fit.vutbr.cz/FITkit/) using FreeRTOS.
 
+![FITKit](http://merlin.fit.vutbr.cz/FITkit/imgs/uvod/001.png)
 
-## [IOS_ardiff hltrace](https://github.com/mdavid626/fit/tree/master/src/IOS_ardiff%20hltrace)
+## [IOS: Ardiff and hltrace](https://github.com/mdavid626/fit/tree/master/src/IOS_ardiff%20hltrace)
 desc
 
 ## [IOS_barbers](https://github.com/mdavid626/fit/tree/master/src/IOS_barbers)
