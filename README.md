@@ -39,13 +39,13 @@ Implementation of the Neighbor Discovery Proxy for IPv6 written in C.
 Tool for monitoring RIP and RIPng written in C.
 
 ## [IZP: Czech sorting](https://github.com/mdavid626/fit/tree/master/src/IZP_czech%20sorting)
-desc
+Command line tool implementing czech sorting written in C.
 
 ## [IZP: Iteration calculations](https://github.com/mdavid626/fit/tree/master/src/IZP_iteration%20calculations)
-desc
+Command line tool implementing tanh and log functions, weighted arithmetic mean and root mean square written in C.
 
 ## [IZP: Matrix operations](https://github.com/mdavid626/fit/tree/master/src/IZP_matrix%20operations)
-desc
+Command line tool for performing matrix operations, like matrix multiplication, dot product etc. written in C
 
 ## [IZP: Text compress](https://github.com/mdavid626/fit/tree/master/src/IZP_text%20compress)
-desc
+Simple text compress tool written in C.
