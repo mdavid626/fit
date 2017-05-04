@@ -36,7 +36,7 @@ Perl script for compressing short SMS messages, for removing czech symbols and f
 Implementation of the Neighbor Discovery Proxy for IPv6 written in C.
 
 ## [ISA: RIPng](https://github.com/mdavid626/fit/tree/master/src/ISA_RIPng)
-desc
+Tool for monitoring RIP and RIPng written in C.
 
 ## [IZP: Czech sorting](https://github.com/mdavid626/fit/tree/master/src/IZP_czech%20sorting)
 desc
