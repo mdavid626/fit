@@ -29,8 +29,8 @@ Client/server application implementing the RDT (Reliable Data Transfer) protocol
 ## [IPK: Web client](https://github.com/mdavid626/fit/tree/master/src/IPK_web%20client)
 Web client application used for getting information about objects on a web server.
 
-## [IPP_sms compress](https://github.com/mdavid626/fit/tree/master/src/IPP_sms%20compress)
-desc
+## [IPP: SMS compress](https://github.com/mdavid626/fit/tree/master/src/IPP_sms%20compress)
+Perl script for compressing short SMS messages, for removing czech symbols and for application of abbrevation rules.
 
 ## [ISA_ndpv6](https://github.com/mdavid626/fit/tree/master/src/ISA_ndpv6)
 desc
