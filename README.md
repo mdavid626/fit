@@ -23,11 +23,11 @@ Solution of the [Sleeping barber problem](https://en.wikipedia.org/wiki/Sleeping
 ## [IPK: List remote dir](https://github.com/mdavid626/fit/tree/master/src/IPK_list%20remote%20dir)
 Client/server application written in C for listing contents of a remote directory using TCP sockets.
 
-## [IPK_rdt transfer](https://github.com/mdavid626/fit/tree/master/src/IPK_rdt%20transfer)
+## [IPK: RDT transfer](https://github.com/mdavid626/fit/tree/master/src/IPK_rdt%20transfer)
 Client/server application implementing the RDT (Reliable Data Transfer) protocol over UDP using sockets.
 
-## [IPK_web client](https://github.com/mdavid626/fit/tree/master/src/IPK_web%20client)
-desc
+## [IPK: Web client](https://github.com/mdavid626/fit/tree/master/src/IPK_web%20client)
+Web client application used for getting information about objects on a web server.
 
 ## [IPP_sms compress](https://github.com/mdavid626/fit/tree/master/src/IPP_sms%20compress)
 desc
